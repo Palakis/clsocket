@@ -557,6 +557,7 @@ protected:
     int32                m_nBufferSize;       /// size of internal send/receive buffer
     int32                m_nSocketDomain;     /// socket type PF_INET, PF_INET6
     CSocketType          m_nSocketType;       /// socket type - UDP, TCP or RAW
+    int32                m_nSocketProto;      /// socket protocol - UDP, TCP or none (0)
     int32                m_nBytesReceived;    /// number of bytes received
     int32                m_nBytesSent;        /// number of bytes sent
     uint32               m_nFlags;            /// socket flags

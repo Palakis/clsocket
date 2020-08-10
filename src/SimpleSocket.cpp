@@ -46,8 +46,8 @@ CSimpleSocket::CSimpleSocket(CSocketType nType) :
     m_socket(INVALID_SOCKET),
     m_socketErrno(CSimpleSocket::SocketInvalidSocket),
     m_pBuffer(NULL), m_nBufferSize(0), m_nSocketDomain(AF_INET),
-    m_nSocketType(SocketTypeInvalid), m_nBytesReceived(-1),
-    m_nBytesSent(-1), m_nFlags(0),
+    m_nSocketType(SocketTypeInvalid), m_nSocketProto(0),
+    m_nBytesReceived(-1), m_nBytesSent(-1), m_nFlags(0),
     m_bIsBlocking(true)
 {
     SetConnectTimeout(1, 0);
@@ -64,12 +64,14 @@ CSimpleSocket::CSimpleSocket(CSocketType nType) :
     {
         m_nSocketDomain = AF_INET;
         m_nSocketType = CSimpleSocket::SocketTypeTcp;
+        m_nSocketProto = IPPROTO_TCP;
         break;
     }
     case CSimpleSocket::SocketTypeTcp6:
     {
         m_nSocketDomain = AF_INET6;
         m_nSocketType = CSimpleSocket::SocketTypeTcp6;
+        m_nSocketProto = IPPROTO_TCP;
         break;
     }
     //----------------------------------------------------------------------
@@ -79,12 +81,14 @@ CSimpleSocket::CSimpleSocket(CSocketType nType) :
     {
         m_nSocketDomain = AF_INET;
         m_nSocketType = CSimpleSocket::SocketTypeUdp;
+        m_nSocketProto = IPPROTO_UDP;
         break;
     }
     case CSimpleSocket::SocketTypeUdp6:
     {
         m_nSocketDomain = AF_INET6;
         m_nSocketType = CSimpleSocket::SocketTypeUdp6;
+        m_nSocketProto = IPPROTO_UDP;
         break;
     }
     //----------------------------------------------------------------------
@@ -103,6 +107,7 @@ CSimpleSocket::CSimpleSocket(CSocketType nType) :
     }
     default:
         m_nSocketType = CSimpleSocket::SocketTypeInvalid;
+        m_nSocketProto = 0;
         break;
     }
 }
@@ -150,7 +155,7 @@ bool CSimpleSocket::Initialize()
     //-------------------------------------------------------------------------
     m_timer.Initialize();
     m_timer.SetStartTime();
-    m_socket = socket(m_nSocketDomain, m_nSocketType, 0);
+    m_socket = socket(m_nSocketDomain, m_nSocketType, m_nSocketProto);
     m_timer.SetEndTime();
 
     TranslateSocketError();
